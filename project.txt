@@ -1,0 +1,42 @@
+
+This project is an optional assignment.
+
+The project involves parallelizing a program to find the shortest path
+between two nodes in a weighted directed graph. The sequential
+alogrithm is due to Dijkstra.
+
+See directory shortest_path. The sequential version is given. It reads
+in the graph from a file in a standard format. There is an example
+file giving the travel time between any two points in New York City. A
+test finds the shortest travel time between two of those points.
+
+Your task is to create an MPI version of this program. You can make
+reasonable changes to the sequential version too, if it helps keep the
+two versions in sync. Note that the specific path produced is not
+necessarily unique, but the length should be.
+
+You will have to think of a good way to distribute the graph.
+
+Your project should include a README file which explains the basic
+strategy of your parallel version. It should also provide any
+necessary instructions for building and running it. It should contain
+a number of tests which run the parallel and sequential versions and
+compare the results. Finally, it should contain at least one scaling
+experiment which shows the parallel performance and speedup in a
+graph. The graph should be generated automatically by a single rule in
+the Makefile.   Discuss your results in the README, and commit
+the graph or graphs.
+
+Your project will be scored based on (1) correctness, (2) code
+quality, including documentation, variable names, small functions,
+etc., and (3) performance.
+
+For extra credit, add OpenMP directives to create a hybrid version and
+run some experiments comparing OpenMP performance to MPI performance.
+
+
+For this project, you may work with one partner from the class,
+if you choose.    Only one of you should submit, but include
+both names in the README.
+
+The grade on this project can replace the two lowest HW grades.
