@@ -8,7 +8,7 @@ set output "mpi-speed-up-over-arcs.pdf"
 # unset label
 # set key vertical top left 
 set xlabel left "Numer of arcs"
-set ylabel left "time (seconds)"
+set ylabel left "Speedup"
 set y2label right "Speedup"
 set xr [0:1200000]
 set yr [0:5]

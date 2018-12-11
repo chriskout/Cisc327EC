@@ -8,9 +8,9 @@ set output "mpi-speed-up-over-nodes.pdf"
 # unset label
 # set key vertical top left 
 set xlabel left "Numer of nodes"
-set ylabel left "time (seconds)"
+set ylabel left "Speedup"
 set y2label right "Speedup"
-set xr [0:1200000]
+set xr [0:500000]
 set yr [0:5]
 #plot  "arcs.dat" using 1:(seq_time/($2)) title 'Speedup' with linespoints axes x1y2
 plot  "nodes.dat" using 1:2 title 'mpi vs seq' with linespoints
