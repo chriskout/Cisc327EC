@@ -49,5 +49,8 @@ run_BAY: shortest_path data/USA-road-t.BAY.gr
 arc_graph: speedup-per-arc.gnu arcs.dat
 	gnuplot "speedup-per-arc.gnu"
 
+node_graph: speedup-per-node.gnu nodes.dat
+	gnuplot "speedup-per-node.gnu"
+
 clean:
 	rm -rf shortest_path *~
