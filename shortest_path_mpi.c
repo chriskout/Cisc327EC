@@ -412,42 +412,39 @@ void find_shortest_path(node_id_t start, node_id_t stop) {
 
 			if (!v->visited) {
 
+
 				if (v->dist < u_dist_local) {
 					u_index_local = j;
 					u_dist_local = v->dist;
 				}
 			}
 		}
-		MPI_Gather(&u_index_local, 1, MPI_UNSIGNED, u_indices,
-				1, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+		MPI_Allgather(&u_index_local, 1, MPI_UNSIGNED, u_indices,
+				1, MPI_UNSIGNED, MPI_COMM_WORLD);
 		
-		if (rank == 0)
-		for (int k=0; k<nprocs; k++){
-			printf("%d \n",u_indices[k]);
-			fflush(stdout);
-		}
 
 		//printf("made it this far, rank = %d\n",rank);
 		//fflush(stdout);
 		/* TODO Maybe somewierd stuff happening here */
-		if (rank == 0)
-			for (int k =0; k<nprocs; k++){
-				unsigned int j = u_indices[k];
-				if (j<total_num_nodes){
-					Node v = the_nodes[j];
-					if (v->dist < u_dist) {
-						u = v;
-						u_dist = v->dist;
-					}
+		for (int k =0; k<nprocs; k++){
+			unsigned int j = u_indices[k];
+			if (j<total_num_nodes){
+				Node v = the_nodes[j];
+				if (!v->visited)
+				if (v->dist < u_dist) {
+					u = v;
+					u_dist = v->dist;
 				}
 			}
-
+		}
+		//printf("visited = %d", u->visited);
+		//fflush(stdout);
 
 		if (u_dist == INFINITY) {
 			printf("There is no path.\n");
 			return;
 		}
-		assert(u);
+		fflush(stdout);
 		if (u->id==stop) {
 			if (rank==0){
 				print_path(u);
