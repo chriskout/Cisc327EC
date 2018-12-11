@@ -22,5 +22,11 @@ shortest_path : shortest_path.c Makefile
 shortest_path_mpi : shortest_path_mpi.c Makefile
 	$(CC) -pedantic -Wall -std=c11 -o shortest_path_mpi shortest_path_mpi.c
 
+run_COL_mpi: shortest_path_mpi data/USA-road-t.COL.gr
+	srun -n 40 shortest_path_mpi data/USA-road-t.COL.gr 435665 1
+
+run_BAY_mpi: shortest_path_mpi data/USA-road-t.BAY.gr
+	srun -n 40 shortest_path_mpi data/USA-road-t.BAY.gr 321270 1
+
 clean:
 	rm -rf shortest_path *~
