@@ -19,8 +19,8 @@ set y2label right "Speedup"
 # set format y "10^{%T}"
 # set xtics 1, 1, 10
 set xr [0:1500000]
-set yr [0:80]
-set y2r [0:10]
-set ytics 0, 10, 80 nomirror
-set y2tics 0, 1, 10 nomirror
+set yr [0:3]
+set y2r [0:0.01]
+set ytics 0, 0.01, 3 nomirror
+set y2tics 0, 0.01,0.01 nomirror
 plot  "arcs.dat" using 1:(seq_time/($2)) title 'Speedup' with linespoints axes x1y2
