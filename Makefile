@@ -46,5 +46,8 @@ run_BAY_mpi: shortest_path_mpi data/USA-road-t.BAY.gr
 run_BAY: shortest_path data/USA-road-t.BAY.gr
 	srun shortest_path data/USA-road-t.BAY.gr 321270 1
 
+arc_graph: speedup-per-arc.gnu arcs.dat
+	gnuplot "speedup-per-arc.gnu"
+
 clean:
 	rm -rf shortest_path *~
