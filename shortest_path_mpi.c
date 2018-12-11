@@ -278,8 +278,9 @@ void parse1(char * filename) {
 
 	lineno=1;
 	read_header(file, &total_num_nodes, &total_num_edges);
-	printf("Parsing graph with %u nodes, %lu edges.\n",
-			total_num_nodes, total_num_edges);
+	if (rank == 0)
+		printf("Parsing graph with %u nodes, %lu edges.\n",
+				total_num_nodes, total_num_edges);
 	the_nodes = malloc(total_num_nodes*sizeof(struct node_s));
 	assert(the_nodes);
 	for (node_id_t i=0; i<total_num_nodes; i++)
