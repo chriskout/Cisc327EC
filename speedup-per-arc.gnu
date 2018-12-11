@@ -19,7 +19,7 @@ set y2label right "Speedup"
 # set format y "10^{%T}"
 # set xtics 1, 1, 10
 set xr [0:1200000]
-set yr [0:3]
+set yr [0:4]
 #set y2r [0:10]
 #set ytics 0, 10, 80 nomirror
 #set y2tics 0, 1, 10 nomirror
