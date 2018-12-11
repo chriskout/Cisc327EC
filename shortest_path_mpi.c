@@ -401,12 +401,11 @@ void find_shortest_path(node_id_t start, node_id_t stop) {
 	while (true) {
 		// find unvisited node with minimal dist...
 		Node u = NULL;
-		int *foo= malloc(sizeof(int)*10);
-		foo[5] =50;
 		unsigned int *u_indices;
 		unsigned int u_index_local = NULL;
 		bigint_t u_dist = INFINITY;
 		bigint_t u_dist_local = INFINITY;
+		//processors finds the node with minimal distance
 		for (node_id_t j=rank; j<total_num_nodes; j+=nprocs) {
 			Node v = the_nodes[j];
 
@@ -419,13 +418,11 @@ void find_shortest_path(node_id_t start, node_id_t stop) {
 				}
 			}
 		}
+		//gather all the processors minimums
 		MPI_Allgather(&u_index_local, 1, MPI_UNSIGNED, u_indices,
 				1, MPI_UNSIGNED, MPI_COMM_WORLD);
-		
-
-		//printf("made it this far, rank = %d\n",rank);
-		//fflush(stdout);
-		/* TODO Maybe somewierd stuff happening here */
+	
+		//Find the minimum of all the processors
 		for (int k =0; k<nprocs; k++){
 			unsigned int j = u_indices[k];
 			if (j<total_num_nodes){
@@ -437,8 +434,6 @@ void find_shortest_path(node_id_t start, node_id_t stop) {
 				}
 			}
 		}
-		//printf("visited = %d", u->visited);
-		//fflush(stdout);
 
 		if (u_dist == INFINITY) {
 			printf("There is no path.\n");
@@ -456,7 +451,8 @@ void find_shortest_path(node_id_t start, node_id_t stop) {
 
 		int num_edges = u->num_edges;
 		Edge *edges = u->edges;
-
+		//not parrallelized because each node has only 4 edges at most. 
+		//Not worth the overhead
 		for (edge_id_t j=0; j<num_edges; j++) {
 			Edge e = edges[j];
 			Node v = the_nodes[e->dest];
