@@ -39,6 +39,12 @@ bigint_t string_to_bigint(const char *str) {
 	return strtoul(str, NULL, 10);
 }
 
+
+
+// ************************  MPI  *************************
+int rank;
+int nprocs;
+
 // ************************  Edge  ************************
 
 /* An edge in the graph */
@@ -395,28 +401,58 @@ void find_shortest_path(node_id_t start, node_id_t stop) {
 	while (true) {
 		// find unvisited node with minimal dist...
 		Node u = NULL;
+		int *foo= malloc(sizeof(int)*10);
+		foo[5] =50;
+		unsigned int *u_indices;
+		unsigned int u_index_local = NULL;
 		bigint_t u_dist = INFINITY;
-
-		for (node_id_t j=0; j<total_num_nodes; j++) {
+		bigint_t u_dist_local = INFINITY;
+		for (node_id_t j=rank; j<total_num_nodes; j+=nprocs) {
 			Node v = the_nodes[j];
 
 			if (!v->visited) {
-				bigint_t v_dist = v->dist;
 
-				if (v_dist < u_dist) {
-					u = v;
-					u_dist = v->dist;
+				if (v->dist < u_dist_local) {
+					u_index_local = j;
+					u_dist_local = v->dist;
 				}
 			}
 		}
+		MPI_Gather(&u_index_local, 1, MPI_UNSIGNED, u_indices,
+				1, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+		
+		if (rank == 0)
+		for (int k=0; k<nprocs; k++){
+			printf("%d \n",u_indices[k]);
+			fflush(stdout);
+		}
+
+		//printf("made it this far, rank = %d\n",rank);
+		//fflush(stdout);
+		/* TODO Maybe somewierd stuff happening here */
+		if (rank == 0)
+			for (int k =0; k<nprocs; k++){
+				unsigned int j = u_indices[k];
+				if (j<total_num_nodes){
+					Node v = the_nodes[j];
+					if (v->dist < u_dist) {
+						u = v;
+						u_dist = v->dist;
+					}
+				}
+			}
+
+
 		if (u_dist == INFINITY) {
 			printf("There is no path.\n");
 			return;
 		}
 		assert(u);
 		if (u->id==stop) {
-			print_path(u);
-			printf("The shortest path has length %lu.\n", u_dist);
+			if (rank==0){
+				print_path(u);
+				printf("The shortest path has length %lu.\n", u_dist);
+			}
 			return;
 		}
 		u->visited = true;
@@ -449,7 +485,10 @@ void find_shortest_path(node_id_t start, node_id_t stop) {
  * The result is printed to stdout.
  */
 int main(int argc, char * argv[]) {
-	MPI_Init(NULL,NULL);
+	MPI_Init(&argc,&argv);
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+
 
 	double time0 = MPI_Wtime();
 
@@ -459,8 +498,9 @@ int main(int argc, char * argv[]) {
 
 	double time1 = MPI_Wtime();
 
-	printf("Parsing complete (time = %lf seconds).\n",
-			time1-time0);
+	if (rank==0)
+		printf("Parsing complete (time = %lf seconds).\n",
+				time1-time0);
 	fflush(stdout);
 #ifdef DEBUG
 	printf("\nThe graph:\n\n");
@@ -470,14 +510,16 @@ int main(int argc, char * argv[]) {
 	bigint_t source_big = string_to_bigint(argv[2]);
 
 	if (source_big<1 || source_big>total_num_nodes) {
-		fprintf(stderr, "Illegal node: %lu\n", source_big);
+		if (rank ==0)
+			fprintf(stderr, "Illegal node: %lu\n", source_big);
 		exit(1);
 	}
 
 	bigint_t target_big = string_to_bigint(argv[3]);
 
 	if (target_big<1 || target_big>total_num_nodes) {
-		fprintf(stderr, "Illegal node: %lu\n", target_big);
+		if (rank ==0)
+			fprintf(stderr, "Illegal node: %lu\n", target_big);
 		exit(1);
 	}
 	find_shortest_path((node_id_t)source_big - 1,
@@ -485,6 +527,7 @@ int main(int argc, char * argv[]) {
 
 	double time2 = MPI_Wtime();
 
-	printf("Total time: %lf seconds.\n", time2-time0);
+	if (rank ==0)
+		printf("Total time: %lf seconds.\n", time2-time0);
 	MPI_Finalize();
 }
