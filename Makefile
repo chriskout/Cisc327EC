@@ -52,5 +52,7 @@ arc_graph: speedup-per-arc.gnu arcs.dat
 node_graph: speedup-per-node.gnu nodes.dat
 	gnuplot "speedup-per-node.gnu"
 
+plots: node_graph arc_graph
+
 clean:
 	rm -rf shortest_path *~
